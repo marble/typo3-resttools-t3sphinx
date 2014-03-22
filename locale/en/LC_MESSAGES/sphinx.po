@@ -1,0 +1,32 @@
+# Translations template for Sphinx.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the Sphinx project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+# marble <martin.bless@typo3.org>, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: Sphinx 1.2b1\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-04-02 10:33+0200\n"
+"PO-Revision-Date: 2014-03-22 17:25+0200\n"
+"Last-Translator: marble <martin.bless@typo3.org>\n"
+"Language-Team: TYPO3 documentation team\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: sphinx/builders/html.py:309
+msgid "index"
+msgstr "Index"
+
+#: sphinx/builders/html.py:369
+msgid "next"
+msgstr "Next"
+
+#: sphinx/builders/html.py:378
+msgid "previous"
+msgstr "Previous"
