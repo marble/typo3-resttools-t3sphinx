@@ -1,0 +1,210 @@
+{#
+    basic/layout.html
+    ~~~~~~~~~~~~~~~~~
+
+    Master layout template for Sphinx themes.
+
+    :copyright: Copyright 2007-2011 by the Sphinx team, see AUTHORS.
+    :license: BSD, see LICENSE for details.
+#}
+{%- set show_source = True %}
+
+{%- set reldelim1 = reldelim1 is not defined and ' &raquo;' or reldelim1 %}
+{%- set reldelim2 = reldelim2 is not defined and ' |' or reldelim2 %}
+
+{%- set render_sidebar = (not embedded) and (not theme_nosidebar|tobool) and (sidebars != []) %}
+{%- set url_root = pathto('', 1) %}
+{# XXX necessary? #}
+{%- if url_root == '#' %}{% set url_root = '' %}{% endif %}
+{%- if not embedded and docstitle %}
+  {%- set titlesuffix = " &mdash; "|safe + docstitle|e %}
+{%- else %}
+  {%- set titlesuffix = "" %}
+{%- endif %}
+{%- macro relbar() %}
+    <div class="related">
+      <h3>{{ _('Navigation') }}</h3>
+      <ul>
+        {%- for rellink in rellinks %}
+        <li class="right" {% if loop.first %}style="margin-right: 10px"{% endif %}>
+          <a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags|e }}"
+             {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
+          {%- if not loop.first %}{{ reldelim2 }}{% endif %}</li>
+        {%- endfor %}
+        {%- block rootrellink %}
+        <li><a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a>{{ reldelim1 }}</li>
+        {%- endblock %}
+        {%- for parent in parents %}
+          <li><a href="{{ parent.link|e }}" {% if loop.last %}{{ accesskey("U") }}{% endif %}>{{ parent.title }}</a>{{ reldelim1 }}</li>
+        {%- endfor %}
+        {%- block relbaritems %} {% endblock %}
+      </ul>
+    </div>
+{%- endmacro %}
+{%- macro sidebar() %}
+      {%- if render_sidebar %}
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+          {%- block sidebarlogo %}
+          {%- if logo %}
+            <p class="logo"><a href="{{ pathto(master_doc) }}">
+              <img class="logo" src="{{ pathto('_static/' + logo, 1) }}" alt="Logo"/>
+            </a></p>
+          {%- endif %}
+          {%- endblock %}
+          {%- if sidebars != None %}
+            {#- new style sidebar: explicitly include/exclude templates #}
+            {%- for sidebartemplate in sidebars %}
+            {%- include sidebartemplate %}
+            {%- endfor %}
+          {%- else %}
+            {#- old style sidebars: using blocks -- should be deprecated #}
+            {%- block sidebartoc %}
+            {%- include "localtoc.html" %}
+            {%- endblock %}
+            {%- block sidebarrel %}
+            {%- include "relations.html" %}
+            {%- endblock %}
+            {%- block sidebarsourcelink %}
+            {%- include "sourcelink.html" %}
+            {%- endblock %}
+            {%- if customsidebar %}
+            {%- include customsidebar %}
+            {%- endif %}
+            {%- block sidebarsearch %}
+            {%- include "searchbox.html" %}
+            {%- endblock %}
+          {%- endif %}
+        </div>
+      </div>
+      {%- endif %}
+{%- endmacro %}
+{%- macro script() %}
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '{{ url_root }}',
+        VERSION:     '{{ release|e }}',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '{{ '' if no_search_suffix else file_suffix }}',
+        HAS_SOURCE:  {{ has_source|lower }}
+      };
+    </script>
+    {%- for scriptfile in script_files %}
+    <script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
+    {%- endfor %}
+{%- endmacro %}
+{%- macro hnavrelated() %}
+<div class="hnav-related-container">
+	<div class="hnav-related">
+		<ul>
+			<li>
+				<a href="{{ pathto(master_doc) }}" title="{{ shorttitle|e }}">Docstart</a>
+			</li>
+
+			{%- block liShowSource %}
+			<li>
+				<a href="{{ pathto('_sources/' + sourcename, true)|e }}" rel="nofollow">
+					{{ _('Show Source') }}
+				</a>
+			</li>
+			{%- endblock %}
+
+			{%- for rellink in rellinks %}
+			<li>
+				<a href="{{ pathto(rellink[0]) }}" title="{{ rellink[1]|striptags|e }}" {{ accesskey(rellink[2]) }}>{{ rellink[3] }}</a>
+			</li>
+			{%- endfor %}
+		</ul>
+	</div>
+	<div class="hnav-related-2">
+		<div class="hnav-div-layout">
+			<a href="#" onclick="setActiveStyleSheet('Style 2'); return false;" title="experimental style 2" class="whitewashed">two</a>&nbsp; 
+			<a href="#" onclick="setActiveStyleSheet('Style 3'); return false;" title="experimental style 3" class="whitewashed">three</a>
+			Layout:
+				<a href="#" onclick="setActiveStyleSheet('Fixed width'); return false;" title="select fixed width layout" class="alt-stylesheet-0">fixed</a>&nbsp; 
+				<a href="#" onclick="setActiveStyleSheet('Adaptive width'); return false;" title="select adaptive width layout" class="alt-stylesheet-1">adaptive</a>&nbsp; 
+		</div>
+	</div>
+</div>
+{%- endmacro %}
+
+{#
+
+http://ubu239.mb.local/LinuxData200/t3doc/t3org_template/html/page_default.html
+http://typo3.org/typo3conf/ext/t3org_template/icons/favicon.ico
+http://typo3.org/typo3conf/ext/t3org_template/html/page_default.html
+
+#}
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>{{title}}</title>
+	<link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/share.css" media="all" />
+	<link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/reset.css" media="all" />
+	<link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/grid.css" media="all" />
+	<link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/main.css" media="all" />
+	<link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/dip.css" media="all" />
+	<link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/print.css" media="print" />
+
+	<!--[if IE]><link rel="stylesheet"   href="http://docs.typo3.org/t3extras/css/ie.css" media="all" /><![endif]-->
+	<!--[if IE 7]><link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/ie7.css" media="all" /><![endif]-->
+	<!--[if IE 8]><link rel="stylesheet" href="http://docs.typo3.org/t3extras/css/ie8.css" media="all" /><![endif]-->
+
+	<link rel="stylesheet" href="http://docs.typo3.org/css/t3_org_doc_main.css" type="text/css" />
+	<link rel="stylesheet" href="http://docs.typo3.org/css/t3_to_be_integrated.css" type="text/css" />
+	<link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css" />
+	<link rel="alternate stylesheet" href="/css/t3_org_doc_main_alt_0.css" type="text/css" title="Fixed width" />
+	<link rel="alternate stylesheet" href="/css/t3_org_doc_main_alt_1.css" type="text/css" title="Adaptive width" />
+	<link rel="alternate stylesheet" href="/css/t3_org_doc_main_alt_2.css" type="text/css" title="Style 2" />
+	<link rel="alternate stylesheet" href="/css/t3_org_doc_main_alt_3.css" type="text/css" title="Style 3" />
+
+	<script src="http://docs.typo3.org/t3extras/js/css_browser_selector.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/jquery-1.5.1.min.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/jquery.easing.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/jquery.tools.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/cufon.js"></script>
+	<script src="http://docs.typo3.org/t3extras/fonts/share.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/jquery.MultiFile.pack.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/prettyCheckboxes.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/jcookies.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/main.js"></script>
+	<script src="http://docs.typo3.org/t3extras/js/dip.js"></script>
+
+	<script src="http://docs.typo3.org/js/styleswitcher.js"></script>
+	<script src="http://docs.typo3.org/js/t3_org_doc_main.js"></script>
+
+	</head>
+
+<body class="js-off">
+	<div class="p doc" id="page">
+		<div class="c cl" id="content">
+			<div id="aside" class="a">
+				<h3><a href="{{ pathto(master_doc) }}">{{ shorttitle|e }}</a></h3>
+				{{ toctree(collapse=True) }}
+				<div class="toc">
+					<p id="p-on-this-page">Bookmarks within this page:</p>
+					{{ toc }}
+				</div>
+			</div>
+
+			<div class="s d">
+
+				{{ hnavrelated() }}
+				{{ body }}
+				{{ hnavrelated() }}
+
+			</div><!-- /#content -->
+		</div><!-- /.d -->
+		<div id="header" class="h">
+			<a id="logo" href="#"><img width="118" height="34" alt="Typo3 Logo" src="http://docs.typo3.org/t3extras/i/typo3-logo.png"></a>
+			<ul class="nav">
+				<li>&nbsp;</li>
+			</ul>
+			<div class="header-bg">
+			</div>
+		</div>
+
+	</div><!-- /#page -->
+</body>
+</html>
