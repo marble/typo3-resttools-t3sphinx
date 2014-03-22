@@ -3,26 +3,23 @@
 
 # Example
 
-# Project name documentation build configuration file, ...0
-
 project = 'Some project name'
-version = '1.2'
+version = '1.3'
 
-
-
-
-#=================================================
+# ============================================================
 #
-# TYPO3 codeblock BEGIN:
+# TYPO3 codeblock BEGIN: (version 2014-03-23)
 #
-# Insert this codeblock at the end of your Sphinx
-# builder configuration file 'conf.py'.
-# This may enable TYPO3 specific features like
-# TYPO3 themes. It makes Yaml settings files work.
+# Insert this codeblock at the end of your Sphinx builder
+# configuration file 'conf.py'. This makes TYPO3 specific
+# features like TYPO3 themes available. It makes Yaml settings
+# files work.
 #
-#-------------------------------------------------
+# ------------------------------------------------------------
 
 if 1 and "TYPO3 specific":
+
+    html_translator_class = "t3sphinx.writers.t3htmlwriter.T3HTMLTranslator"
 
     try:
         t3DocTeam
@@ -35,7 +32,16 @@ if 1 and "TYPO3 specific":
         html_theme = 'typo3sphinx'
     except:
         html_theme = 'default'
-
+    try:
+        t3DocTeam['locale_dir'] = t3sphinx.locale_dir
+    except:
+        t3DocTeam['locale_dir'] = None
+    if t3DocTeam['locale_dir']:
+        try:
+            locale_dirs
+        except NameError:
+            locale_dirs = []
+        locale_dirs.append(t3DocTeam['locale_dir'])
     t3DocTeam['conf_py_file'] = None
     try:
         t3DocTeam['conf_py_file'] = __file__
@@ -80,4 +86,3 @@ if 1 and "TYPO3 specific":
 # TYPO3 codeblock END.
 #
 #=================================================
-
