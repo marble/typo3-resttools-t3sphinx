@@ -32,3 +32,8 @@ pathToGlobalYamlSettings = os.path.join(package_dir, 'settings', 'GlobalSettings
 
 # absolute path to /.../t3sphinx/resources/typo3_codeblock_for_conf.py
 typo3_codeblock_for_conf_py = os.path.join(package_dir, 'resources', 'typo3_codeblock_for_conf.py')
+
+# register the FieldListTable directive in docutils as 't3-field-list-table'
+from docutils.parsers.rst import directives
+from t3sphinx.t3docutils.directives import fieldlisttable
+directives.register_directive('t3-field-list-table', fieldlisttable.FieldListTable)

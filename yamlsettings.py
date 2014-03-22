@@ -22,14 +22,6 @@ import codecs, os, yaml, time
 ospj = os.path.join
 ospe = os.path.exists
 
-if 1:
-    # though strictly spoken it's not "yamlsetting" we nevertheless
-    # do this here: register the FieldListTable directive in docutils
-    from docutils.parsers.rst import directives
-    from t3sphinx import fieldlisttable
-    directives.register_directive('t3-field-list-table', fieldlisttable.FieldListTable)
-
-
 safe_types = [
     #None,
     type(None),
