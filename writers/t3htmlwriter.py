@@ -9,11 +9,7 @@
     :license: BSD, see LICENSE for details.
 """
 
-from sphinx.writers.html import HTMLWriter, HTMLTranslator, _, \
-    SmartyPantsHTMLTranslator, Image, os, posixpath
-
-class T3HTMLWriter(HTMLWriter):
-    pass
+from sphinx.writers.html import HTMLTranslator, _, Image, os, posixpath
 
 class T3HTMLTranslator(HTMLTranslator):
 
@@ -124,5 +120,3 @@ class T3HTMLTranslator(HTMLTranslator):
         HTMLTranslator.depart_title(self, node)
 
 
-class T3SmartyPantsHTMLTranslator(SmartyPantsHTMLTranslator):
-    pass
