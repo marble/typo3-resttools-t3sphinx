@@ -2,7 +2,7 @@
 #
 # t3sphinx.yamlsettings.py  alpha
 #
-# mb, 2012-08-14, 2012-08-20
+# mb, 2012-08-14, 2014-03-24
 #
 #
 
@@ -21,6 +21,7 @@ import codecs, os, yaml, time
 
 ospj = os.path.join
 ospe = os.path.exists
+osps = os.path.split
 
 safe_types = [
     #None,
@@ -75,12 +76,94 @@ class YamlSettings:
             return result, S
 
         skippedKeys = []
-        for k in S['conf.py']:
-            if k.startswith('__'):
-                skippedKeys.append(k)
-            else:
-                self.theDict[k] = S['conf.py'][k]
 
+        def integrate(pool, incoming, skippedKeys):
+            assert type(pool) == dict
+            assert type(incoming) == dict
+            assert type(skippedKeys) == list
+            keys = {}
+            for k in incoming.keys():
+                if k.startswith('__'):
+                    skippedKeys.append(k)
+                else:
+                    keys[k] = k
+            while keys:
+                key = keys.keys()[0]
+                for mode in ['_!UPDATE!', '_!REMOVE!']:
+                    if key.endswith(mode):
+                        key = key[:-len(mode)]
+                        break
+                else:
+                    mode = '_!REPLACE!'
+
+                if incoming.has_key(key + '_!REMOVE!'):
+                    key_remove = key + '_!REMOVE!'
+                    value_remove = incoming[key_remove]
+                    del keys[key_remove]
+                else:
+                    key_remove = None
+                    
+                if incoming.has_key(key):
+                    key_replace = key
+                    value_replace = incoming[key_replace]
+                    del keys[key_replace]
+                else:
+                    key_replace = None
+
+                if incoming.has_key(key + '_!UPDATE!'):
+                    key_update = key + '_!UPDATE!'
+                    value_update = incoming[key_update]
+                    del keys[key_update]
+                else:
+                    key_update = None
+
+                if key_remove and pool.has_key(key):
+                    if type(value_remove) is dict:
+                        if type(pool[key]) is dict:
+                            for kk in value_remove.keys():
+                                if pool[key].has_key(kk):
+                                    del pool[key][kk]
+                    elif type(value_remove) is list:
+                        if type(pool[key]) is list:
+                            for vv in value_remove:
+                                try:
+                                    p = pool[key].index(vv)
+                                except ValueError:
+                                    p = None
+                                if not p is None:
+                                    del pool[key][p]
+                    else:
+                        del pool[key]
+
+                if key_replace:
+                    pool[key] = value_replace
+
+                if key_update:
+                    if type(value_update) is dict:
+                        if not pool.has_key(key):
+                            pool[key] = {}
+                        if type(pool[key]) is dict:
+                            for kk in value_update.keys():
+                                pool[key][kk] = value_update[kk]
+                    elif type(value_update) is list:
+                        if not pool.has_key(key):
+                            pool[key] = []
+                        if type(pool[key]) is list:
+                            for vv in value_update:
+                                try:
+                                    p = pool[key].index(vv)
+                                except ValueError:
+                                    p = None
+                                if p is None:
+                                    pool[key].append(vv)
+                                else:
+                                    pool[key][p] = vv
+                    else:
+                        pool[key] = value_update
+
+
+
+        integrate(self.theDict, S['conf.py'], skippedKeys)
         result = "Result: Applied '%s' to 'conf.py'." % fname
         if skippedKeys:
             result += ' These were skipped: %r.' % skippedKeys + '.'
@@ -191,6 +274,7 @@ def processYamlSettings(theDict, parameters={}):
         'pathToGlobalYamlSettings',
         ]
     ys = YamlSettings(theDict, parameters)
+    ys.fixIntersphinxMapping()
 
         # unchanged conf.py:
     ys.safeDumpToFileAsYaml({'conf.py': ys.theDict}, '10_conf_py.yml', frominfo='conf.py')
@@ -208,6 +292,13 @@ def processYamlSettings(theDict, parameters={}):
     ys.dumpToFileAsYaml(S, '30_Settings.yml', msg=result, frominfo=p)
     ys.fixIntersphinxMapping()
     ys.safeDumpToFileAsYaml({'conf.py': ys.theDict}, '10+20+30_conf_py.yml', frominfo='conf.py')
+
+        # conf.py plus FinalSettings.yml
+    p = ospj(osps(ys.parameters['pathToGlobalYamlSettings'])[0], 'FinalSettings.yml')
+    result, S = ys.applyYamlSettings(p)
+    ys.dumpToFileAsYaml(S, '40_FinalSettings.yml', msg=result, frominfo=p)
+    ys.fixIntersphinxMapping()
+    ys.safeDumpToFileAsYaml({'conf.py': ys.theDict}, '10+20+30+40_EffectiveSettings.yml', frominfo='conf.py')
 
 
 if 0 and __name__=="__main__":

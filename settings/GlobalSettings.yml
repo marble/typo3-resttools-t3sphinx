@@ -104,7 +104,7 @@ conf.py:
     - http://docs.typo3.org/typo3cms/TyposcriptSyntaxReference
     - null
 
-  highlight_language: 'php'
+  highlight_language: none
 
   # html_theme: typo3sphinx
   html_theme: t3org

@@ -24,3 +24,7 @@ msgstr "Weiter"
 #: sphinx/builders/html.py:378
 msgid "previous"
 msgstr "Zurück"
+
+#: Navigate up one level
+msgid "up"
+msgstr "Hoch"

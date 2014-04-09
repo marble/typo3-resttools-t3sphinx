@@ -1,0 +1,15 @@
+# FinalSettings.yml
+
+---
+conf.py:
+  ## ==================================================
+  ## define configuration data for conf.py as
+  ## "parameter: value" pairs here.
+  ## 
+  ## FinalSettings.yml are last to come and will override
+  ## everything else defined before.
+  ## --------------------------------------------------
+
+  demo_parameter: dummy value
+  
+...
